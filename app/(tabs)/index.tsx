@@ -1,17 +1,21 @@
-// app/index.tsx
+// app/(tabs)/index.tsx
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { View, Text, StyleSheet, ScrollView, Alert, StatusBar } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ChannelCard from '../../components/ChannelCard';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import useFetchChannels from '../../hooks/fetchChannels';
 import fetchCurrentVideoUrl from '../../hooks/fetchCurrentVideoUrl';
-import { RootStackParamList, Channel } from './types';
-import VideoPlayerScreen from '../VideoPlayerScreen';
+import { Channel, RootStackParamList } from './types';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+
+const HomeScreen: React.FC = () => {
   const { data: channels, loading, error } = useFetchChannels();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   const handleSelectChannel = async (channel: Channel) => {
     try {
@@ -39,24 +43,31 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Header />
-      {channels.map((channel) => (
-        <ChannelCard
-          key={channel.channel_id}
-          channel={channel}
-          onSelect={() => handleSelectChannel(channel)}
-        />
-      ))}
-      <Footer />
-    </ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
+      <ScrollView style={styles.container}>
+        <Header />
+        {channels.map((channel) => (
+          <ChannelCard
+            key={channel.channel_id}
+            channel={channel}
+            onSelect={() => handleSelectChannel(channel)}
+          />
+        ))}
+        <Footer />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#1a1126',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#1a1126',
   },
   loader: {
     flex: 1,
@@ -70,15 +81,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const Stack = createStackNavigator<RootStackParamList>();
-
-const MainStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
-    </Stack.Navigator>
-  );
-};
-
-export default MainStack;
+export default HomeScreen;

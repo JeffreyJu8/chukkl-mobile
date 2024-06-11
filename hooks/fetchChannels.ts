@@ -27,10 +27,14 @@ const useFetchChannels = (): FetchData => {
         const response = await fetch(
           `${API_BASE_URL}/channels/dayoftheweek/${dayOfWeek}?timezone=${encodeURIComponent(userTimeZone)}`
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const channels: Channel[] = await response.json();
         const limitedChannels = channels.slice(0, 25);
         setData(limitedChannels);
       } catch (error) {
+        console.error('Error fetching channels:', error); // Enhanced logging
         setError(true);
       } finally {
         setLoading(false);

@@ -21,7 +21,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({ channel, onSelect }) => {
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#373243',
     marginVertical: 8,
     borderRadius: 8,
     shadowColor: '#000',
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff'
   },
   bio: {
     fontSize: 14,

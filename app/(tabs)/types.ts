@@ -1,6 +1,6 @@
 // app/types.ts
 import { RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -8,7 +8,7 @@ export type RootStackParamList = {
 };
 
 export type VideoPlayerScreenRouteProp = RouteProp<RootStackParamList, 'VideoPlayer'>;
-export type VideoPlayerScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'VideoPlayer'>;
+export type VideoPlayerScreenNavigationProp = StackNavigationProp<RootStackParamList, 'VideoPlayer'>;
 
 export interface VideoPlayerScreenProps {
   route: VideoPlayerScreenRouteProp;

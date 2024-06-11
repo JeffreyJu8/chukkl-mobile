@@ -17,22 +17,51 @@ const fetchCurrentVideoUrl = async (channelId: string): Promise<string> => {
 
   const data = await response.json();
 
-  const scheduledStartTime = moment.tz(data.startTime, userTimeZone);
+  // Assume startTime is in HH:mm:ss format and combine it with the current date
+  const currentDate = moment().format('YYYY-MM-DD');
+  const scheduledStartTimeString = `${currentDate} ${data.startTime}`;
+  const scheduledStartTime = moment.tz(scheduledStartTimeString, userTimeZone);
   const currentTime = moment.tz(userTimeZone);
   const timeElapsed = currentTime.diff(scheduledStartTime, 'seconds');
-  const initialStartTime = parseInt(extractStartTime(data.embedUrl));
-  const startTimes = initialStartTime + timeElapsed;
+  
+  // Ensure initialStartTime is a valid number
+  const initialStartTime = parseInt(extractStartTime(data.embedUrl), 10);
+  const validStartTime = isNaN(initialStartTime) ? 0 : initialStartTime;
 
-  // Adjust the video URL to include the start time
-  const videoUrl = `${data.embedUrl}?start=${startTimes}`;
+  const startTimes = validStartTime + timeElapsed;
 
-  return videoUrl;
+  // Correct the URL by replacing start=NaN with the valid start time
+  const correctedUrl = correctStartParameter(data.embedUrl, startTimes);
+
+  // Print the URL to the console
+  console.log(`Fetched video URL: ${correctedUrl}`);
+
+  return correctedUrl;
 };
 
 const extractStartTime = (url: string): string => {
   const regex = /[?&]start=(\d+)/;
   const match = url.match(regex);
   return match ? match[1] : '0';
+};
+
+const correctStartParameter = (url: string, validStartTime: number): string => {
+  let startTimeFound = false;
+  const params = url.split('&').map(param => {
+    if (param.includes('start=NaN')) {
+      if (startTimeFound) {
+        param = `start=${validStartTime}`;
+      } else {
+        param = param.replace('start=NaN', `start=${validStartTime}`);
+        startTimeFound = true;
+      }
+    } else if (param.includes('start=')) {
+      startTimeFound = true;
+    }
+    return param;
+  });
+
+  return params.join('&');
 };
 
 export default fetchCurrentVideoUrl;
