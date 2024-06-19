@@ -11,8 +11,8 @@ const Header = () => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingTop: 0,
+    paddingBottom: 0,
     backgroundColor: '#1a1126',
     alignItems: 'center',
   },

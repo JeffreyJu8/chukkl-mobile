@@ -25,7 +25,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Chukkl' }}
+          options={{ title: 'chukkl' }}
         />
         <Stack.Screen 
           name="VideoPlayer" 

@@ -11,7 +11,7 @@ type Props = StackScreenProps<RootStackParamList, 'VideoPlayer'>;
 
 const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
   const { videoUrl } = route.params;
-  const navigation = useNavigation();
+  const navigation = useNavigation<Props['navigation']>();
   const [muted, setMuted] = useState(true);
   const webviewRef = useRef<any>(null);
 
@@ -41,11 +41,18 @@ const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
     }
   };
 
+  const goBack = () => {
+    navigation.navigate('Home', { videoUrl }); // Pass the video URL back to HomeScreen
+  };
+
   return (
     <View style={styles.container}>
       <VideoPlayer videoUrl={videoUrl} onMessage={handleMessage} ref={webviewRef} />
       <TouchableOpacity style={styles.muteButton} onPress={toggleMute}>
-        <FontAwesome name={muted ? 'volume-off' : 'volume-up'} size={24} color="#007BFF" />
+        <FontAwesome name={muted ? 'volume-off' : 'volume-up'} size={24} color="#FFFFFF" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={goBack}>
+        <FontAwesome name="arrow-left" size={24} color="#FFFFFF" />
       </TouchableOpacity>
     </View>
   );
@@ -63,7 +70,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     zIndex: 10,
-    backgroundColor: 'transparent', // Ensure the button's background is transparent
+    backgroundColor: 'transparent',
+  },
+  backButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    padding: 10,
+    borderRadius: 5,
+    zIndex: 10,
+    backgroundColor: 'transparent',
   },
 });
 
