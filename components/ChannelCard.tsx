@@ -34,8 +34,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     flex: 1, 
-    height: 100,
+    height: 150,
     marginRight: 10,
+    borderWidth: 2,         
+    borderColor: '#8aefe7'
   },
   expandedCard: {
     height: 'auto',

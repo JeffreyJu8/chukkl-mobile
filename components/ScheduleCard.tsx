@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Schedule } from '../app/(tabs)/types'; // Import Schedule type
 
 interface ScheduleCardProps {
-  schedule: any;
-  isCurrent: boolean;
+  schedule: Schedule[];
 }
 
-const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, isCurrent }) => {
+const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
   const [expanded, setExpanded] = useState(false);
+  const [currentSchedule, setCurrentSchedule] = useState<Schedule | null>(null);
   const [timeLeft, setTimeLeft] = useState('');
 
   const handleToggleExpand = () => {
@@ -15,10 +16,44 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, isCurrent }) => {
   };
 
   useEffect(() => {
-    if (isCurrent) {
+    const updateCurrentSchedule = () => {
+      if (!Array.isArray(schedule)) {
+        console.error('Schedule is not an array:', schedule);
+        return;
+      }
+
+      const now = new Date();
+      const nowTime = now.getHours() * 60 + now.getMinutes();
+
+      const current = schedule.find((item) => {
+        const startTime = item.start_time.split(':');
+        const endTime = item.end_time.split(':');
+        const startMinutes = parseInt(startTime[0]) * 60 + parseInt(startTime[1]);
+        const endMinutes = parseInt(endTime[0]) * 60 + parseInt(endTime[1]);
+        return nowTime >= startMinutes && nowTime < endMinutes;
+      });
+
+      if (current) {
+        setCurrentSchedule(current);
+      } else {
+        setCurrentSchedule(null);
+      }
+    };
+
+    updateCurrentSchedule(); // Initial call to set the current schedule
+    const intervalId = setInterval(updateCurrentSchedule, 60000); // Update every minute
+
+    return () => clearInterval(intervalId); // Clear interval on component unmount
+  }, [schedule]);
+
+  useEffect(() => {
+    if (currentSchedule) {
       const updateRemainingTime = () => {
         const currentTime = new Date();
-        const endTime = new Date(schedule.end_time);
+        const endTime = new Date();
+        const [endHour, endMinute] = currentSchedule.end_time.split(':').map(Number);
+        endTime.setHours(endHour);
+        endTime.setMinutes(endMinute);
         const remainingTimeMs = endTime.getTime() - currentTime.getTime();
         const remainingHours = Math.floor((remainingTimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const remainingMinutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -30,17 +65,31 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, isCurrent }) => {
 
       return () => clearInterval(intervalId); // Clear interval on component unmount
     } else {
-      const startTimeStr = new Date(schedule.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-      const endTimeStr = new Date(schedule.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-      setTimeLeft(`${startTimeStr} - ${endTimeStr}`);
+      setTimeLeft('');
     }
-  }, [isCurrent, schedule]);
+  }, [currentSchedule]);
 
   return (
     <TouchableOpacity onPress={handleToggleExpand} style={[styles.card, expanded && styles.expandedCard]}>
-      <Text style={styles.title}>{schedule.title}</Text>
-      <Text style={styles.timeLeft}>{timeLeft}</Text>
-      {expanded && <Text style={styles.description}>{schedule.description}</Text>}
+      {currentSchedule ? (
+        <>
+          <Text style={styles.title}>{currentSchedule.title}</Text>
+          <Text style={styles.timeLeft}>{timeLeft}</Text>
+          {expanded && (
+            <View>
+              <Text style={styles.description}>{currentSchedule.description}</Text>
+              <Text style={styles.time}>
+                Start Time: {currentSchedule.start_time}
+              </Text>
+              <Text style={styles.time}>
+                End Time: {currentSchedule.end_time}
+              </Text>
+            </View>
+          )}
+        </>
+      ) : (
+        <Text style={styles.noCurrentSchedule}>No current schedule</Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -54,8 +103,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
-    flex: 1, 
-    height: 100,
+    flex: 1,
+    height: 150,
+    borderWidth: 2,
+    borderColor: '#8aefe7',
   },
   expandedCard: {
     height: 'auto',
@@ -73,6 +124,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#ccc',
     marginTop: 8,
+  },
+  time: {
+    fontSize: 14,
+    color: '#ccc',
+    marginTop: 4,
+  },
+  noCurrentSchedule: {
+    fontSize: 16,
+    color: '#fff',
   },
 });
 

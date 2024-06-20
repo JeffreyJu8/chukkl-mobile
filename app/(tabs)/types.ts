@@ -23,9 +23,12 @@ export interface Channel {
 }
 
 export interface Schedule {
+  schedule_id: string;
+  video_id: string;
   title: string;
   description: string;
   start_time: string;
   end_time: string;
+  channel_id: string;
   maturity_rating: string;
 }

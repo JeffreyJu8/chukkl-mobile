@@ -2,28 +2,30 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, StatusBar, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import ChannelCard from '../../components/ChannelCard';
-import ScheduleCard from '../../components/ScheduleCard'; // Import ScheduleCard
+import ScheduleCard from '../../components/ScheduleCard';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import useFetchChannels from '../../hooks/fetchChannels';
-import { fetchScheduleDetailsForChannelAndDay } from '../../hooks/fetchSchedule'; // Import function
+import { fetchScheduleDetailsForChannelAndDay } from '../../hooks/fetchSchedule';
 import fetchCurrentVideoUrl from '../../hooks/fetchCurrentVideoUrl';
 import VideoPlayer from '../../components/VideoPlayer';
-import { Channel, RootStackParamList } from './types';
+import { Channel, RootStackParamList, Schedule } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import moment from 'moment-timezone';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC = () => {
   const { data: channels, loading, error } = useFetchChannels();
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const route = useRoute<HomeScreenRouteProp>();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [muted, setMuted] = useState(true);
   const webviewRef = useRef<any>(null);
-  const [schedules, setSchedules] = useState<{ [key: string]: any[] }>({}); // State to hold schedules
+  const [schedules, setSchedules] = useState<{ [key: string]: Schedule[] }>({});
   const [scheduleLoading, setScheduleLoading] = useState<{ [key: string]: boolean }>({});
   const [scheduleError, setScheduleError] = useState<{ [key: string]: string | null }>({});
 
@@ -56,11 +58,12 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     const fetchSchedules = async () => {
       if (channels) {
-        const dayOfWeek = moment().format('dddd'); // Get the current day of the week
+        const dayOfWeek = moment().format('dddd');
         const schedulePromises = channels.map(async (channel) => {
           setScheduleLoading((prev) => ({ ...prev, [channel.channel_id]: true }));
           try {
             const schedule = await fetchScheduleDetailsForChannelAndDay(channel.channel_id, dayOfWeek);
+            // console.log(`Schedule for channel ${channel.channel_id}:`, schedule);
             setSchedules((prev) => ({ ...prev, [channel.channel_id]: schedule }));
             setScheduleError((prev) => ({ ...prev, [channel.channel_id]: null }));
           } catch (error) {
@@ -123,7 +126,6 @@ const HomeScreen: React.FC = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
       <ScrollView style={styles.container}>
-        <Header />
         {videoUrl && (
           <View style={styles.videoPlayerContainer}>
             <VideoPlayer videoUrl={videoUrl} onMessage={() => {}} ref={webviewRef} />
@@ -150,7 +152,9 @@ const HomeScreen: React.FC = () => {
               {scheduleLoading[channel.channel_id] && <Text>Loading schedule...</Text>}
               {scheduleError[channel.channel_id] && <Text>{scheduleError[channel.channel_id]}</Text>}
               {schedules[channel.channel_id] && !scheduleLoading[channel.channel_id] && !scheduleError[channel.channel_id] && (
-                <ScheduleCard schedule={schedules[channel.channel_id][0]} />
+                <ScheduleCard
+                  schedule={schedules[channel.channel_id]}
+                />
               )}
             </View>
           </View>
