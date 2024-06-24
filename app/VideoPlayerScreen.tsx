@@ -10,7 +10,7 @@ import { FontAwesome } from '@expo/vector-icons';
 type Props = StackScreenProps<RootStackParamList, 'VideoPlayer'>;
 
 const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
-  const { videoUrl } = route.params;
+  const { videoUrl, currentTime, endTime } = route.params;
   const navigation = useNavigation<Props['navigation']>();
   const [muted, setMuted] = useState(true);
   const webviewRef = useRef<any>(null);
@@ -24,6 +24,14 @@ const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
       ScreenOrientation.unlockAsync();
     };
   }, []);
+
+  useEffect(() => {
+    if (webviewRef.current && currentTime !== undefined) {
+      webviewRef.current.injectJavaScript(`
+        window.postMessage(JSON.stringify({ event: 'seekTo', time: ${currentTime} }), '*');
+      `);
+    }
+  }, [currentTime]);
 
   const toggleMute = () => {
     if (webviewRef.current) {
@@ -42,12 +50,27 @@ const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
   };
 
   const goBack = () => {
-    navigation.navigate('Home', { videoUrl }); // Pass the video URL back to HomeScreen
+    if (webviewRef.current) {
+      webviewRef.current.injectJavaScript(`
+        window.postMessage(JSON.stringify({ event: 'getCurrentTime' }), '*');
+      `);
+    }
+  };
+
+  const handleBackMessage = (event: any) => {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (data.event === 'currentTime') {
+      navigation.navigate('Home', { 
+        videoUrl, 
+        currentTime: data.currentTime, 
+        endTime 
+      });
+    }
   };
 
   return (
     <View style={styles.container}>
-      <VideoPlayer videoUrl={videoUrl} onMessage={handleMessage} ref={webviewRef} />
+      <VideoPlayer videoUrl={videoUrl} onMessage={handleBackMessage} ref={webviewRef} />
       <TouchableOpacity style={styles.muteButton} onPress={toggleMute}>
         <FontAwesome name={muted ? 'volume-off' : 'volume-up'} size={24} color="#FFFFFF" />
       </TouchableOpacity>

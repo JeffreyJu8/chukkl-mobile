@@ -60,14 +60,22 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
         setTimeLeft(`${remainingHours}hr ${remainingMinutes}min left`);
       };
 
-      updateRemainingTime(); // Initial call to set the remaining time
-      const intervalId = setInterval(updateRemainingTime, 5000); // Update every 5 seconds
+      updateRemainingTime(); 
+      const intervalId = setInterval(updateRemainingTime, 1000); 
 
-      return () => clearInterval(intervalId); // Clear interval on component unmount
+      return () => clearInterval(intervalId); 
     } else {
       setTimeLeft('');
     }
   }, [currentSchedule]);
+
+  const formatTime = (time: string) => {
+    const [hour, minute] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hour);
+    date.setMinutes(minute);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  };
 
   return (
     <TouchableOpacity onPress={handleToggleExpand} style={[styles.card, expanded && styles.expandedCard]}>
@@ -79,10 +87,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule }) => {
             <View>
               <Text style={styles.description}>{currentSchedule.description}</Text>
               <Text style={styles.time}>
-                Start Time: {currentSchedule.start_time}
+                Start Time: {formatTime(currentSchedule.start_time)}
               </Text>
               <Text style={styles.time}>
-                End Time: {currentSchedule.end_time}
+                End Time: {formatTime(currentSchedule.end_time)}
               </Text>
             </View>
           )}
@@ -127,8 +135,8 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 14,
-    color: '#ccc',
-    marginTop: 4,
+    color: '#999',
+    marginTop: 12,
   },
   noCurrentSchedule: {
     fontSize: 16,

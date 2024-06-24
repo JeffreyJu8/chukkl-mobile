@@ -31,7 +31,7 @@ const useFetchChannels = (): FetchData => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const channels: Channel[] = await response.json();
-        const limitedChannels = channels.slice(0, 25);
+        const limitedChannels = channels.slice(25, 50);
         setData(limitedChannels);
       } catch (error) {
         console.error('Error fetching channels:', error); // Enhanced logging

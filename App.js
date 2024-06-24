@@ -32,7 +32,7 @@ export default function App() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerShown: false // Hide the default header
+          headerShown: false 
         }}
       >
         <Stack.Screen

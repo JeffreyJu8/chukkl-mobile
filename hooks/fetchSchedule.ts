@@ -37,7 +37,7 @@ export const fetchScheduleDetailsForChannelAndDay = async (channelId: string, da
       throw new Error('Failed to fetch schedule');
     }
     const data = await response.json();
-    // console.log('Fetched schedule details:', data);
+
     return data;
   } catch (err) {
     console.error('Error fetching schedule details:', err);

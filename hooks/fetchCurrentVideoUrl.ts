@@ -1,7 +1,7 @@
 import API_BASE_URL from '../constants/api';
 import moment from 'moment-timezone';
 
-const fetchCurrentVideoUrl = async (channelId: string): Promise<string> => {
+const fetchCurrentVideoUrl = async (channelId: string): Promise<{ url: string, endTime: string }> => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const response = await fetch(`${API_BASE_URL}/videos`, {
     method: 'POST',
@@ -17,26 +17,22 @@ const fetchCurrentVideoUrl = async (channelId: string): Promise<string> => {
 
   const data = await response.json();
 
-  // Assume startTime is in HH:mm:ss format and combine it with the current date
   const currentDate = moment().format('YYYY-MM-DD');
   const scheduledStartTimeString = `${currentDate} ${data.startTime}`;
   const scheduledStartTime = moment.tz(scheduledStartTimeString, userTimeZone);
   const currentTime = moment.tz(userTimeZone);
   const timeElapsed = currentTime.diff(scheduledStartTime, 'seconds');
   
-  // Ensure initialStartTime is a valid number
   const initialStartTime = parseInt(extractStartTime(data.embedUrl), 10);
   const validStartTime = isNaN(initialStartTime) ? 0 : initialStartTime;
 
   const startTimes = validStartTime + timeElapsed;
 
-  // Correct the URL by replacing start=NaN with the valid start time
   const correctedUrl = correctStartParameter(data.embedUrl, startTimes);
 
-  // Print the URL to the console
-  console.log(`Fetched video URL: ${correctedUrl}`);
+  const endTime = `${currentDate} ${data.endTime}`;  // Assuming endTime is in 'HH:mm:ss' format
 
-  return correctedUrl;
+  return { url: correctedUrl, endTime };
 };
 
 const extractStartTime = (url: string): string => {

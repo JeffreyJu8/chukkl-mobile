@@ -23,31 +23,36 @@ const HomeScreen: React.FC = () => {
   const route = useRoute<HomeScreenRouteProp>();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [muted, setMuted] = useState(true);
+  const [endTime, setEndTime] = useState<string | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState<string>('26');
+  const [currentTime, setCurrentTime] = useState<number>(0);
   const webviewRef = useRef<any>(null);
   const [schedules, setSchedules] = useState<{ [key: string]: Schedule[] }>({});
   const [scheduleLoading, setScheduleLoading] = useState<{ [key: string]: boolean }>({});
   const [scheduleError, setScheduleError] = useState<{ [key: string]: string | null }>({});
 
-  const fetchInitialVideo = async () => {
+  const fetchInitialVideo = async (channelId: string = '26') => {
     try {
-      const url = await fetchCurrentVideoUrl('1'); 
+      const { url, endTime } = await fetchCurrentVideoUrl(channelId);
       setVideoUrl(url);
+      setEndTime(endTime);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
     }
   };
 
   useEffect(() => {
-    fetchInitialVideo();
-  }, []);
+    fetchInitialVideo(selectedChannel);
+  }, [selectedChannel]);
 
   useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
-      // Refresh the video URL and channels data
       if (route.params?.videoUrl) {
         setVideoUrl(route.params.videoUrl);
+        setCurrentTime(route.params.currentTime || 0);
+        setEndTime(route.params.endTime || null);  // Handle undefined case
       } else {
-        fetchInitialVideo();
+        fetchInitialVideo(selectedChannel);
       }
     });
 
@@ -55,34 +60,49 @@ const HomeScreen: React.FC = () => {
   }, [navigation, route.params?.videoUrl]);
 
   useEffect(() => {
-    const fetchSchedules = async () => {
-      if (channels) {
-        const dayOfWeek = moment().format('dddd');
-        const schedulePromises = channels.map(async (channel) => {
-          setScheduleLoading((prev) => ({ ...prev, [channel.channel_id]: true }));
-          try {
-            const schedule = await fetchScheduleDetailsForChannelAndDay(channel.channel_id, dayOfWeek);
-            // console.log(`Schedule for channel ${channel.channel_id}:`, schedule);
-            setSchedules((prev) => ({ ...prev, [channel.channel_id]: schedule }));
-            setScheduleError((prev) => ({ ...prev, [channel.channel_id]: null }));
-          } catch (error) {
-            setScheduleError((prev) => ({ ...prev, [channel.channel_id]: 'Failed to fetch schedule' }));
-          } finally {
-            setScheduleLoading((prev) => ({ ...prev, [channel.channel_id]: false }));
-          }
-        });
-        await Promise.all(schedulePromises);
-      }
-    };
+    if (endTime) {
+      const interval = setInterval(() => {
+        const currentTime = moment.tz(Intl.DateTimeFormat().resolvedOptions().timeZone);
+        const videoEndTime = moment.tz(endTime, 'YYYY-MM-DD HH:mm:ss', Intl.DateTimeFormat().resolvedOptions().timeZone);
+        if (currentTime.isSameOrAfter(videoEndTime)) {
+          fetchInitialVideo(selectedChannel);
+        }
+      }, 1000);
 
+      return () => clearInterval(interval);
+    }
+  }, [endTime, selectedChannel]);
+
+  const fetchSchedules = async () => {
+    if (channels) {
+      const dayOfWeek = moment().format('dddd');
+      const schedulePromises = channels.map(async (channel) => {
+        setScheduleLoading((prev) => ({ ...prev, [channel.channel_id]: true }));
+        try {
+          const schedule = await fetchScheduleDetailsForChannelAndDay(channel.channel_id, dayOfWeek);
+          setSchedules((prev) => ({ ...prev, [channel.channel_id]: schedule }));
+          setScheduleError((prev) => ({ ...prev, [channel.channel_id]: null }));
+        } catch (error) {
+          setScheduleError((prev) => ({ ...prev, [channel.channel_id]: 'Failed to fetch schedule' }));
+        } finally {
+          setScheduleLoading((prev) => ({ ...prev, [channel.channel_id]: false }));
+        }
+      });
+      await Promise.all(schedulePromises);
+    }
+  };
+
+  useEffect(() => {
     fetchSchedules();
   }, [channels]);
 
   const handleSelectChannel = async (channel: Channel) => {
     try {
-      const url = await fetchCurrentVideoUrl(channel.channel_id);
+      const { url, endTime } = await fetchCurrentVideoUrl(channel.channel_id);
       setVideoUrl(url);
-      setMuted(true); 
+      setEndTime(endTime);
+      setSelectedChannel(channel.channel_id);  // Track the selected channel
+      setMuted(true);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
     }
@@ -104,6 +124,7 @@ const HomeScreen: React.FC = () => {
       Alert.alert('Error', 'No video URL available');
     }
   };
+
 
   if (loading) {
     return (
@@ -169,7 +190,7 @@ const Header = () => {
     <View style={styles.headerContainer}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
       <Text style={styles.headerText}>
-        <Text style={styles.highlight}>ch</Text>kkl
+        <Text style={styles.highlight}>ch</Text>ukkl
       </Text>
       <Text style={styles.subHeaderText}>Safe Entertainment</Text>
     </View>
@@ -257,7 +278,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'NotoSans',
     marginBottom: 5
-
   },
 });
 
