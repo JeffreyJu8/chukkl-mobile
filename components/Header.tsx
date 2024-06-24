@@ -1,38 +1,65 @@
 import React from 'react';
 import { View, Text, StyleSheet, StatusBar, Platform } from 'react-native';
+import { useFonts } from 'expo-font';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Header = () => {
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
-      <View style={styles.header}>
-        <Text style={styles.title}>Trustworthy Entertainment</Text>
-      </View>
-    </View>
-  );
+  const [loaded] = useFonts({
+    NotoSans: require('../assets/fonts/NotoSans.ttf'),
+    Rubik_Medium: require('../assets/fonts/Rubik-Medium.ttf'),
+    Nunito_Medium: require('../assets/fonts/Nunito-Medium.ttf')
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
+  // return (
+  //   <SafeAreaView style={styles.safeArea}>
+  //     <View style={styles.headerContainer}>
+  //       <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
+  //       <View style={styles.statusBarContent}>
+  //         <Text style={styles.statusBarText}>
+  //           <Text style={styles.highlight}>ch</Text>kkl
+  //         </Text>
+  //       </View>
+  //       <View style={styles.headerContent}>
+  //         <Text style={styles.headerText}>Safe Entertainment</Text>
+  //       </View>
+  //     </View>
+  //   </SafeAreaView>
+  // );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 0,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+  safeArea: {
     backgroundColor: '#1a1126',
   },
-  header: {
+  headerContainer: {
     backgroundColor: '#1a1126',
-    alignItems: 'center',
     justifyContent: 'center',
-    height: 60, // Increased height
+    width: '100%',
   },
-  title: {
-    fontSize: 20,
+  statusBarContent: {
+    alignItems: 'center',
+  },
+  statusBarText: {
+    fontSize: 50,
     fontWeight: 'bold',
     color: '#fff',
-    height: 30, // Adjusted height
+    fontFamily: 'Nunito_Medium',
+  },
+  highlight: {
+    color: '#8aefe7',
+  },
+  headerContent: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  headerText: {
+    fontSize: 15,
+    color: '#fff',
+    fontFamily: 'Rubik_Medium',
   },
 });
 

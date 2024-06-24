@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, Alert, StatusBar, TouchableOpacity 
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import ChannelCard from '../../components/ChannelCard';
 import ScheduleCard from '../../components/ScheduleCard';
-import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import useFetchChannels from '../../hooks/fetchChannels';
 import { fetchScheduleDetailsForChannelAndDay } from '../../hooks/fetchSchedule';
@@ -31,7 +30,7 @@ const HomeScreen: React.FC = () => {
 
   const fetchInitialVideo = async () => {
     try {
-      const url = await fetchCurrentVideoUrl('1'); // Initial video URL, replace '1' with a valid channel ID if necessary
+      const url = await fetchCurrentVideoUrl('1'); 
       setVideoUrl(url);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
@@ -83,7 +82,7 @@ const HomeScreen: React.FC = () => {
     try {
       const url = await fetchCurrentVideoUrl(channel.channel_id);
       setVideoUrl(url);
-      setMuted(true); // Reset mute state when switching videos
+      setMuted(true); 
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
     }
@@ -124,7 +123,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
+      <Header />
       <ScrollView style={styles.container}>
         {videoUrl && (
           <View style={styles.videoPlayerContainer}>
@@ -162,6 +161,18 @@ const HomeScreen: React.FC = () => {
         <Footer />
       </ScrollView>
     </SafeAreaView>
+  );
+};
+
+const Header = () => {
+  return (
+    <View style={styles.headerContainer}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1126" />
+      <Text style={styles.headerText}>
+        <Text style={styles.highlight}>ch</Text>kkl
+      </Text>
+      <Text style={styles.subHeaderText}>Safe Entertainment</Text>
+    </View>
   );
 };
 
@@ -216,6 +227,37 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     marginHorizontal: 5,
+  },
+  statusBarContent: {
+    alignItems: 'center',
+  },
+  statusBarText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: '#fff',
+    fontFamily: 'Nunito_Medium',
+  },
+  highlight: {
+    color: '#8aefe7',
+  },
+  headerContainer: {
+    alignItems: 'center',
+    backgroundColor: '#1a1126',
+    paddingTop: StatusBar.currentHeight,
+  },
+  headerText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: '#fff',
+    fontFamily: 'Nunito_Medium',
+    marginBottom: -10
+  },
+  subHeaderText: {
+    fontSize: 20,
+    color: '#fff',
+    fontFamily: 'NotoSans',
+    marginBottom: 5
+
   },
 });
 

@@ -30,6 +30,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.6",
     "expo-web-browser": "~13.0.3",
+    "fbjs": "^3.0.5",
     "graphql": "^15.8.0",
     "metro": "~0.80.8",
     "moment": "^2.30.1",
