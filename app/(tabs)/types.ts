@@ -1,13 +1,11 @@
-// app/types.ts
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 // types.ts
 export type RootStackParamList = {
-  Home: { videoUrl?: string; currentTime?: number; endTime?: string };
-  VideoPlayer: { videoUrl: string; currentTime?: number; endTime?: string };
+  Home: { videoUrl?: string; currentTime?: number; endTime?: string; selectedChannel?: string };
+  VideoPlayer: { videoUrl: string; currentTime?: number; endTime?: string; selectedChannel: string };
 };
-
 
 export type VideoPlayerScreenRouteProp = RouteProp<RootStackParamList, 'VideoPlayer'>;
 export type VideoPlayerScreenNavigationProp = StackNavigationProp<RootStackParamList, 'VideoPlayer'>;

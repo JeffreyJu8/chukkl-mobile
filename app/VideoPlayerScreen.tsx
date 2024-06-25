@@ -10,7 +10,7 @@ import { FontAwesome } from '@expo/vector-icons';
 type Props = StackScreenProps<RootStackParamList, 'VideoPlayer'>;
 
 const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
-  const { videoUrl, currentTime, endTime } = route.params;
+  const { videoUrl, currentTime, endTime, selectedChannel } = route.params;
   const navigation = useNavigation<Props['navigation']>();
   const [muted, setMuted] = useState(true);
   const webviewRef = useRef<any>(null);
@@ -43,20 +43,21 @@ const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
   };
 
   const goBack = () => {
-    if (webviewRef.current) {
-      webviewRef.current.injectJavaScript(`
-        window.postMessage(JSON.stringify({ event: 'getCurrentTime' }), '*');
-      `);
-    }
+    console.log(`Returning to home with channel: ${selectedChannel}`);
+    navigation.navigate('Home', { 
+      selectedChannel
+    });
   };
 
   const handleBackMessage = (event: any) => {
     const data = JSON.parse(event.nativeEvent.data);
     if (data.event === 'currentTime') {
+      console.log(`Returning to home with channel: ${selectedChannel}`);
       navigation.navigate('Home', { 
         videoUrl, 
         currentTime: data.currentTime, 
-        endTime 
+        endTime,
+        selectedChannel
       });
     }
   };

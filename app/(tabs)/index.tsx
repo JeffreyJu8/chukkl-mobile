@@ -36,6 +36,7 @@ const HomeScreen: React.FC = () => {
       const { url, endTime } = await fetchCurrentVideoUrl(channelId);
       setVideoUrl(url);
       setEndTime(endTime);
+      console.log(`Initial video URL for channel ${channelId}: ${url}`);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
     }
@@ -47,17 +48,23 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
+      console.log('Focus event triggered');
+      console.log('Route params:', route.params);
       if (route.params?.videoUrl) {
         setVideoUrl(route.params.videoUrl);
         setCurrentTime(route.params.currentTime || 0);
-        setEndTime(route.params.endTime || null);  // Handle undefined case
+        setEndTime(route.params.endTime || null);
+        if (route.params.selectedChannel) {
+          setSelectedChannel(route.params.selectedChannel);
+          console.log(`Returning to home with channel: ${route.params.selectedChannel}`);
+        }
       } else {
         fetchInitialVideo(selectedChannel);
       }
     });
 
     return unsubscribeFocus;
-  }, [navigation, route.params?.videoUrl]);
+  }, [navigation, route.params]);
 
   useEffect(() => {
     if (endTime) {
@@ -101,8 +108,9 @@ const HomeScreen: React.FC = () => {
       const { url, endTime } = await fetchCurrentVideoUrl(channel.channel_id);
       setVideoUrl(url);
       setEndTime(endTime);
-      setSelectedChannel(channel.channel_id);  // Track the selected channel
+      setSelectedChannel(channel.channel_id); // Track the selected channel
       setMuted(true);
+      console.log(`Selected channel: ${channel.channel_id}`);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');
     }
@@ -122,12 +130,12 @@ const HomeScreen: React.FC = () => {
       const currentTime = moment.tz(Intl.DateTimeFormat().resolvedOptions().timeZone);
       const videoEndTime = moment.tz(endTime, 'YYYY-MM-DD HH:mm:ss', Intl.DateTimeFormat().resolvedOptions().timeZone);
       const videoDuration = videoEndTime.diff(currentTime, 'seconds');
-      navigation.navigate('VideoPlayer', { videoUrl, currentTime: videoDuration, endTime });
+      console.log(`Going to fullscreen with channel: ${selectedChannel}`);
+      navigation.navigate('VideoPlayer', { videoUrl, currentTime: videoDuration, endTime, selectedChannel });
     } else {
       Alert.alert('Error', 'No video URL or end time available');
     }
   };
-
 
   if (loading) {
     return (
@@ -195,7 +203,7 @@ const Header = () => {
       <Text style={styles.headerText}>
         <Text style={styles.highlight}>ch</Text>ukkl
       </Text>
-      <Text style={styles.subHeaderText}>Safe Entertainment</Text>
+      <Text style={styles.subHeaderText}>Kid's Entertainment</Text>
     </View>
   );
 };
