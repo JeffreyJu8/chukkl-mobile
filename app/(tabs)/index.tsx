@@ -118,10 +118,13 @@ const HomeScreen: React.FC = () => {
   };
 
   const goToFullscreen = () => {
-    if (videoUrl) {
-      navigation.navigate('VideoPlayer', { videoUrl });
+    if (videoUrl && endTime) {
+      const currentTime = moment.tz(Intl.DateTimeFormat().resolvedOptions().timeZone);
+      const videoEndTime = moment.tz(endTime, 'YYYY-MM-DD HH:mm:ss', Intl.DateTimeFormat().resolvedOptions().timeZone);
+      const videoDuration = videoEndTime.diff(currentTime, 'seconds');
+      navigation.navigate('VideoPlayer', { videoUrl, currentTime: videoDuration, endTime });
     } else {
-      Alert.alert('Error', 'No video URL available');
+      Alert.alert('Error', 'No video URL or end time available');
     }
   };
 

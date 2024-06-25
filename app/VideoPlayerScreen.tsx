@@ -42,13 +42,6 @@ const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
     }
   };
 
-  const handleMessage = (event: any) => {
-    const data = JSON.parse(event.nativeEvent.data);
-    if (data.event === 'onReady' || data.event === 'onPlaying') {
-      setMuted(data.muted);
-    }
-  };
-
   const goBack = () => {
     if (webviewRef.current) {
       webviewRef.current.injectJavaScript(`
