@@ -13,7 +13,8 @@ export default function App() {
     Rubik_Medium: require('./assets/fonts/Rubik-Medium.ttf'),
     Nunito_Medium: require('./assets/fonts/Nunito-Medium.ttf'),
     Kavoon: require('./assets/fonts/Kavoon-Regular.ttf'),
-    ComicNeue_Bold: require('./assets/fonts/ComicNeue-Bold.ttf')
+    ComicNeue_Bold: require('./assets/fonts/ComicNeue-Bold.ttf'),
+    Aileron: require('./assets/fonts/Aileron-Bold.otf')
   });
 
   if (!loaded) {

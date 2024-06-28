@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "chukkl_mobile",
+    "name": "chukkl",
     "slug": "chukkl_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chukkl"
     },
     "android": {
       "adaptiveIcon": {
@@ -37,6 +38,11 @@
         }
       ],
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "87165ad4-bdbc-4a8b-9ab0-ea0159c96865"
+      }
+    }
   }
 }

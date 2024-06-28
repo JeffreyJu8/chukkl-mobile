@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
     color: '#fff',
-    fontFamily: 'Nunito_Medium',
+    fontFamily: 'Aileron',
     marginBottom: -10
   },
   subHeaderText: {
