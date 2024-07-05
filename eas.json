@@ -13,6 +13,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios":{
+        "appleId": "jeffreyju1899@gmail.com",
+        "ascAppId": "6498866831",
+        "appleTeamId": "3AZ7YHPA8A"
+      }
+    }
   }
 }
