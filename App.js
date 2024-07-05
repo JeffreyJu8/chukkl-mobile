@@ -1,13 +1,15 @@
+import { registerRootComponent } from 'expo';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './app/(tabs)/index';
 import VideoPlayerScreen from './app/VideoPlayerScreen';
 import { useFonts } from 'expo-font';
+import { View, ActivityIndicator } from 'react-native';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+function App() {
   const [loaded] = useFonts({
     NotoSans: require('./assets/fonts/NotoSans.ttf'),
     Rubik_Medium: require('./assets/fonts/Rubik-Medium.ttf'),
@@ -18,7 +20,11 @@ export default function App() {
   });
 
   if (!loaded) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   return (
@@ -33,7 +39,7 @@ export default function App() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerShown: false 
+          headerShown: false
         }}
       >
         <Stack.Screen
@@ -49,3 +55,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+// Register the main component
+registerRootComponent(App);
+
+export default App;

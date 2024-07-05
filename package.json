@@ -1,6 +1,6 @@
 {
   "name": "chukkl_mobile",
-  "main": "expo-router/entry",
+  "main": "App.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client",
@@ -15,6 +15,12 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@babel/plugin-transform-block-scoping": "^7.24.7",
+    "@babel/plugin-transform-classes": "^7.24.7",
+    "@babel/plugin-transform-computed-properties": "^7.24.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.7",
+    "@babel/plugin-transform-parameters": "^7.24.7",
+    "@babel/template": "^7.24.7",
     "@expo/vector-icons": "^14.0.0",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.3.29",
@@ -24,7 +30,7 @@
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.7",
     "expo-linking": "~6.3.1",
-    "expo-router": "^3.5.15",
+    "expo-router": "^3.5.17",
     "expo-screen-orientation": "~7.0.5",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
@@ -32,9 +38,13 @@
     "expo-web-browser": "~13.0.3",
     "fbjs": "^3.0.5",
     "graphql": "^15.8.0",
+    "install": "^0.13.0",
     "metro": "~0.80.8",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
+    "node-fetch": "^3.3.2",
+    "npm": "^10.8.1",
+    "pretty-format": "^29.7.0",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -49,10 +59,11 @@
     "react-native-web": "~0.19.10",
     "react-native-webview": "13.8.6",
     "react-native-youtube": "^2.0.2",
-    "react-youtube": "^10.1.0"
+    "react-youtube": "^10.1.0",
+    "expo-dev-client": "~4.0.19"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0",
+    "@babel/core": "^7.24.7",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.79",
     "@types/react-test-renderer": "^18.0.7",

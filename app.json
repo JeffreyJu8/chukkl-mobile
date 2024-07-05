@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.chukkl"
+      "bundleIdentifier": "com.chukkl",
+      "enableHermes": false
     },
     "android": {
       "adaptiveIcon": {
