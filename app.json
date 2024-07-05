@@ -15,7 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.chukkl",
-      "enableHermes": false
+      "enableHermes": false,
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
