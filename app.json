@@ -16,7 +16,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.chukkl",
       "enableHermes": false,
-      "buildNumber": "2"
+      "buildNumber": "2",
+      "icon": "./assets/images/icon.png",
+      "infoPlist": {
+        "CFBundleIconName": "AppIcon"
+      }
     },
     "android": {
       "adaptiveIcon": {
