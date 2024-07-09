@@ -22,7 +22,7 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const route = useRoute<HomeScreenRouteProp>();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [selectedChannel, setSelectedChannel] = useState<string>('26');
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -109,7 +109,7 @@ const HomeScreen: React.FC = () => {
       setVideoUrl(url);
       setEndTime(endTime);
       setSelectedChannel(channel.channel_id); // Track the selected channel
-      setMuted(true);
+      setMuted(false);
       console.log(`Selected channel: ${channel.channel_id}`);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch the current video URL');

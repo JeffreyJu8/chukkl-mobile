@@ -12,7 +12,7 @@ type Props = StackScreenProps<RootStackParamList, 'VideoPlayer'>;
 const VideoPlayerScreen: React.FC<Props> = ({ route }) => {
   const { videoUrl, currentTime, endTime, selectedChannel } = route.params;
   const navigation = useNavigation<Props['navigation']>();
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const webviewRef = useRef<any>(null);
 
   useEffect(() => {

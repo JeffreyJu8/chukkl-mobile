@@ -47,7 +47,7 @@ const VideoPlayer = forwardRef(({ videoUrl, onMessage }: { videoUrl: string, onM
           playerVars: {
             'controls': 0,
             'autoplay': 1,
-            'mute': 1,
+            'mute': 0,
             'disablekb': 1,
             'fs': 0,
             'modestbranding': 1,

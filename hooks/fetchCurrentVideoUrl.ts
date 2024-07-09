@@ -28,7 +28,10 @@ const fetchCurrentVideoUrl = async (channelId: string): Promise<{ url: string, e
 
   const startTimes = validStartTime + timeElapsed;
 
-  const correctedUrl = correctStartParameter(data.embedUrl, startTimes);
+  let correctedUrl = correctStartParameter(data.embedUrl, startTimes);
+
+  // Ensure the URL includes the mute=0 parameter and remove any duplicate mute parameters
+  correctedUrl = correctMuteParameter(correctedUrl);
 
   const endTime = `${currentDate} ${data.endTime}`;  // Assuming endTime is in 'HH:mm:ss' format
 
@@ -56,6 +59,26 @@ const correctStartParameter = (url: string, validStartTime: number): string => {
     }
     return param;
   });
+
+  return params.join('&');
+};
+
+const correctMuteParameter = (url: string): string => {
+  let muteParamFound = false;
+  const params = url.split('&').map(param => {
+    if (param.includes('mute=')) {
+      if (muteParamFound) {
+        return ''; // Remove duplicate mute parameter
+      }
+      muteParamFound = true;
+      return 'mute=0'; // Ensure the mute parameter is set to 0 (unmuted)
+    }
+    return param;
+  }).filter(param => param !== ''); // Remove empty strings
+
+  if (!muteParamFound) {
+    params.push('mute=0'); // Add mute=0 if not found
+  }
 
   return params.join('&');
 };
