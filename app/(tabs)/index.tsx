@@ -156,7 +156,7 @@ const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header />
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         {videoUrl && (
           <View style={styles.videoPlayerContainer}>
             <VideoPlayer videoUrl={videoUrl} onMessage={() => {}} ref={webviewRef} />
@@ -170,28 +170,30 @@ const HomeScreen: React.FC = () => {
             </View>
           </View>
         )}
-        {channels.map((channel) => (
-          <View key={channel.channel_id} style={styles.row}>
-            <View style={styles.column}>
-              <ChannelCard
-                key={channel.channel_id}
-                channel={channel}
-                onSelect={() => handleSelectChannel(channel)}
-              />
-            </View>
-            <View style={styles.column}>
-              {scheduleLoading[channel.channel_id] && <Text>Loading schedule...</Text>}
-              {scheduleError[channel.channel_id] && <Text>{scheduleError[channel.channel_id]}</Text>}
-              {schedules[channel.channel_id] && !scheduleLoading[channel.channel_id] && !scheduleError[channel.channel_id] && (
-                <ScheduleCard
-                  schedule={schedules[channel.channel_id]}
+        <ScrollView style={styles.scrollContainer} contentContainerStyle={{ paddingTop: 5 }}>
+          {channels.map((channel) => (
+            <View key={channel.channel_id} style={styles.row}>
+              <View style={styles.column}>
+                <ChannelCard
+                  key={channel.channel_id}
+                  channel={channel}
+                  onSelect={() => handleSelectChannel(channel)}
                 />
-              )}
+              </View>
+              <View style={styles.column}>
+                {scheduleLoading[channel.channel_id] && <Text>Loading schedule...</Text>}
+                {scheduleError[channel.channel_id] && <Text>{scheduleError[channel.channel_id]}</Text>}
+                {schedules[channel.channel_id] && !scheduleLoading[channel.channel_id] && !scheduleError[channel.channel_id] && (
+                  <ScheduleCard
+                    schedule={schedules[channel.channel_id]}
+                  />
+                )}
+              </View>
             </View>
-          </View>
-        ))}
-        <Footer />
-      </ScrollView>
+          ))}
+          <Footer />
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -215,6 +217,10 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    position: 'relative',
+  },
+  scrollContainer: {
+    flex: 1,
     backgroundColor: '#1a1126',
   },
   loader: {
@@ -229,24 +235,25 @@ const styles = StyleSheet.create({
   },
   videoPlayerContainer: {
     height: 300,
+    width: '100%',
+    backgroundColor: '#000',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    width: '100%',
-    paddingRight: 10,
-    color: '#fff',
+    padding: 3,
+    backgroundColor: '#1a1126',
   },
   muteButton: {
     marginHorizontal: 10,
-    padding: 5,
+    padding: 3,
     borderRadius: 5,
     backgroundColor: 'transparent',
   },
   fullscreenButton: {
     marginHorizontal: 10,
-    padding: 5,
+    padding: 3,
     borderRadius: 5,
     backgroundColor: 'transparent',
   },
@@ -282,13 +289,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     fontFamily: 'Aileron',
-    marginBottom: -10
+    marginBottom: -10,
   },
   subHeaderText: {
     fontSize: 20,
     color: '#fff',
     fontFamily: 'NotoSans',
-    marginBottom: 5
+    marginBottom: 5,
   },
 });
 
